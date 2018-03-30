@@ -73,7 +73,5 @@ vibrate()
 Good luck!
 
 ## Staff Solution
-If you want to play with the staff implementation, you can view it using the
-Expo app by following [this url](https://exp.host/@jhhayashi/pomodoro-timer) or
-by entering `@jhhayashi/pomodoro-timer` as the project URL after pressing the
-`+` button in the Expo app.
+If you want to play with the staff implementation, you can view it using
+Snack at [@jhhayashi/project2jsolution](https://snack.expo.io/@jhhayashi/project2-solution).
