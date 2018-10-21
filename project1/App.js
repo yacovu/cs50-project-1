@@ -42,7 +42,7 @@ export default class App extends React.Component{
   componentDidMount() {   
     if (this.state.runTimer){
       this.initTimer()
-      this.fixSeconds()
+      this.fixSecondsLayout()
       this.interval = setInterval(this.startTimer, 1000)
     }
   }
@@ -57,10 +57,12 @@ export default class App extends React.Component{
 
   initTimer = () => {
     if (this.state.needToWork) {
-      this.setState(prevState => ({minutes: 25, seconds: 0, fixedSeconds: "00"}))
+      this.setState(prevState => ({minutes: 25, seconds: 1, fixedSeconds: "00"}))
+      // this.setState(prevState => ({minutes: 0, seconds: 10, fixedSeconds: "00"}))
     }
     else {
-      this.setState(prevState => ({minutes: 5, seconds: 0, fixedSeconds: "00"}))
+      this.setState(prevState => ({minutes: 5, seconds: 1, fixedSeconds: "00"}))
+      // this.setState(prevState => ({minutes: 0, seconds: 5, fixedSeconds: "00"}))
     }
   }
 
@@ -77,8 +79,8 @@ export default class App extends React.Component{
     this.setState(prevState => ({seconds: prevState.seconds - 1, fixedSeconds: this.state.seconds}))
   }
 
- fixSeconds = () => {
-   this.setState(prevState => ({fixedSeconds: "0" + this.state.seconds}))
+ fixSecondsLayout = () => {
+   this.setState(() => ({fixedSeconds: "0" + this.state.seconds}))
  }
 
  timeIsUp = () => {
@@ -91,19 +93,19 @@ export default class App extends React.Component{
   }
 
   startTimer = () => {
-  if (this.state.seconds < 10) {
-    this.fixSeconds()
-     if (this.state.seconds === 0) {      
-        if (this.timeIsUp()) {          
+    this.decreaseTimerByOneSecond()
+    if (this.state.seconds < 10) {
+      this.fixSecondsLayout()
+      if (this.state.seconds === 0) {    
+        if (this.timeIsUp()) { 
           vibrate()          
           this.changeTimerType()
         }
-        else {  
+        else {
           this.decreaseTimerByOneMinute() 
-        }               
-       }    
-     }
-     this.decreaseTimerByOneSecond()
+        }
+      }
+    }
   }
 
   startClick = () => {
