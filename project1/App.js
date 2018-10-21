@@ -8,42 +8,63 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-type Props = {};
+import {vibrate} from './utils';
 
 class Counter extends React.Component {
   constructor() {
     super()
+    
+  }
+
+ render() {
+    return (
+      <View style={styles.container}>
+        <Text>{this.props.minutes}:{this.props.seconds}</Text> 
+      </View>
+    );
+  }
+}
+
+
+export default class App extends React.Component{
+   constructor() {
+    super()
     this.state = {
-      minutes: 24,
-      seconds: 59,
-      fixedSeconds: 59,
-      // run: true,   
-      // needToWork: false
+      //TODO: change from seconds to minutes
+      minutes: 0,
+      seconds: 0,
+      fixedSeconds: 0,
+      runTimer: true,
+      needToWork: true
     }
   }
 
   componentDidMount() {   
-    if (!this.props.needToWork) {
-      this.setState(prevState => ({minutes: 4})) 
+    if (this.state.runTimer){
+      this.initTimer()
+      this.interval = setInterval(this.startTimer, 1000)
     }
-    this.startTimer()
   }
 
   componentWillUnmount() {
     clearInterval(this.interval)
   }
 
-  addCheckmark = () => {
-    this.setState(prevState => ({checkmark: prevState.checkmark + 1}))
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.runTimer
   }
+
+  initTimer = () => {
+    if (this.state.needToWork) {
+      this.setState(prevState => ({minutes: 25, seconds: 0}))
+      this.fixSeconds()
+    }
+    else {
+      this.setState(prevState => ({minutes: 5, seconds: 0}))
+    }
+    this.setState(prevState => ({needToWork: !prevState.needToWork}))
+  }
+
 
   decreaseTimerByOneMinute = () => {
     this.setState(prevState => ({
@@ -61,45 +82,39 @@ class Counter extends React.Component {
    this.setState(prevState => ({fixedSeconds: "0" + this.state.seconds}))
  }
 
-  runTimer = () => {
-    this.decreaseTimerByOneSecond()
+ checkIfTimeIsUp = () => {
+    if (this.state.minutes === 0 && this.state.seconds === 0) {
+      vibrate()
+      changeTimerType()
+    }
+  }
+
+  changeTimerType = () => {
+    
+  }
+
+  startTimer = () => {
     if (this.state.seconds < 10) {
       this.fixSeconds()
+      // alert(this.state.fixedSeconds)
       if (this.state.seconds === 0) {
         this.decreaseTimerByOneMinute()
+        this.checkIfTimeIsUp()
       }    
     }
-  }
-}
-
-
-
-export default class App extends React.Component{
-   constructor() {
-    super()
-    this.state = {
-      //TODO: change from seconds to minutes
-      minutes: 24,
-      seconds: 59,
-      fixedSeconds: 59,
-      run: true,
-      checkmark: 0,
-    }
-  }
-   componentDidMount() {
-    // if (this.state.run) {
-      setInterval(this.runTimer, 1000)
-    // }
-    // else {
-    //   return false
-    // }
+    this.decreaseTimerByOneSecond()
   }
 
 
 render() {
   return (
-    <View style={styles.container}>
-      <Text>{this.state.minutes}:{this.state.fixedSeconds}</Text> 
+    <View 
+      style={styles.container}
+    >
+      <Counter
+        minutes={this.state.minutes}
+        seconds={this.state.fixedSeconds}
+      />
     </View>
   );
 }
