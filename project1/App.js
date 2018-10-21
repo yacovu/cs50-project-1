@@ -24,7 +24,7 @@ export default class App extends Component<Props> {
       //TODO: change from seconds to minutes
       minutes: 24,
       seconds: 59,
-      s: 59,
+      fixedSeconds: 59,
       run: true
     }
   }
@@ -38,31 +38,26 @@ export default class App extends Component<Props> {
   }
  runTimer = () => {
   if (this.state.seconds < 10) {
-    this.setState(prevState => ({
-      s: "0" + this.state.seconds,
-      seconds: prevState.seconds - 1
-    }))
+    this.setState(prevState => ({fixedSeconds: "0" + this.state.seconds}))
     if (this.state.seconds === 0) {
       this.setState(prevState => ({
       seconds: 59,
-      s: 59,
+      fixedSeconds: 59,
       minutes: prevState.minutes - 1
     }))
     }
   }
   else {
-    this.setState(prevState => ({
-      seconds: prevState.seconds - 1,
-      s: this.state.seconds
-    }))
+    this.setState(prevState => ({fixedSeconds: this.state.seconds}))
   }
+  this.setState(prevState => ({seconds: prevState.seconds - 1}))
 }
 
 
   render() {
     return (
       <View style={styles.container}>
-        <Text>{this.state.minutes}:{this.state.s}</Text> 
+        <Text>{this.state.minutes}:{this.state.fixedSeconds}</Text> 
       </View>
     );
   }
