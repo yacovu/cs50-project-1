@@ -17,25 +17,28 @@ const instructions = Platform.select({
 });
 
 type Props = {};
-export default class App extends Component<Props> {
-   constructor() {
+
+class Counter extends React.Component {
+  constructor() {
     super()
     this.state = {
-      //TODO: change from seconds to minutes
       minutes: 24,
       seconds: 59,
       fixedSeconds: 59,
-      run: true,
-      checkmark: 0,
+      // run: true,   
+      // needToWork: false
     }
   }
-   componentDidMount() {
-    // if (this.state.run) {
-      setInterval(this.runTimer, 1000)
-    // }
-    // else {
-    //   return false
-    // }
+
+  componentDidMount() {   
+    if (!this.props.needToWork) {
+      this.setState(prevState => ({minutes: 4})) 
+    }
+    this.startTimer()
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval)
   }
 
   addCheckmark = () => {
@@ -58,15 +61,39 @@ export default class App extends Component<Props> {
    this.setState(prevState => ({fixedSeconds: "0" + this.state.seconds}))
  }
 
-runTimer = () => {
-  this.decreaseTimerByOneSecond()
-  if (this.state.seconds < 10) {
-    this.fixSeconds()
-    if (this.state.seconds === 0) {
-      this.decreaseTimerByOneMinute()
-    }    
+  runTimer = () => {
+    this.decreaseTimerByOneSecond()
+    if (this.state.seconds < 10) {
+      this.fixSeconds()
+      if (this.state.seconds === 0) {
+        this.decreaseTimerByOneMinute()
+      }    
+    }
   }
 }
+
+
+
+export default class App extends React.Component{
+   constructor() {
+    super()
+    this.state = {
+      //TODO: change from seconds to minutes
+      minutes: 24,
+      seconds: 59,
+      fixedSeconds: 59,
+      run: true,
+      checkmark: 0,
+    }
+  }
+   componentDidMount() {
+    // if (this.state.run) {
+      setInterval(this.runTimer, 1000)
+    // }
+    // else {
+    //   return false
+    // }
+  }
 
 
 render() {
