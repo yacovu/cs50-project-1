@@ -25,7 +25,8 @@ export default class App extends Component<Props> {
       minutes: 24,
       seconds: 59,
       fixedSeconds: 59,
-      run: true
+      run: true,
+      checkmark: 0,
     }
   }
    componentDidMount() {
@@ -36,31 +37,45 @@ export default class App extends Component<Props> {
     //   return false
     // }
   }
- runTimer = () => {
+
+  addCheckmark = () => {
+    this.setState(prevState => ({checkmark: prevState.checkmark + 1}))
+  }
+
+  decreaseTimerByOneMinute = () => {
+    this.setState(prevState => ({
+        seconds: 59,
+        fixedSeconds: 59,
+        minutes: prevState.minutes - 1
+      }))
+  }
+
+  decreaseTimerByOneSecond = () => {
+    this.setState(prevState => ({seconds: prevState.seconds - 1, fixedSeconds: this.state.seconds}))
+  }
+
+ fixSeconds = () => {
+   this.setState(prevState => ({fixedSeconds: "0" + this.state.seconds}))
+ }
+
+runTimer = () => {
+  this.decreaseTimerByOneSecond()
   if (this.state.seconds < 10) {
-    this.setState(prevState => ({fixedSeconds: "0" + this.state.seconds}))
+    this.fixSeconds()
     if (this.state.seconds === 0) {
-      this.setState(prevState => ({
-      seconds: 59,
-      fixedSeconds: 59,
-      minutes: prevState.minutes - 1
-    }))
-    }
+      this.decreaseTimerByOneMinute()
+    }    
   }
-  else {
-    this.setState(prevState => ({fixedSeconds: this.state.seconds}))
-  }
-  this.setState(prevState => ({seconds: prevState.seconds - 1}))
 }
 
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>{this.state.minutes}:{this.state.fixedSeconds}</Text> 
-      </View>
-    );
-  }
+render() {
+  return (
+    <View style={styles.container}>
+      <Text>{this.state.minutes}:{this.state.fixedSeconds}</Text> 
+    </View>
+  );
+}
 }
 
 const styles = StyleSheet.create({
