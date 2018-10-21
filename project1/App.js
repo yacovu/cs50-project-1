@@ -34,17 +34,17 @@ export default class App extends React.Component{
       minutes: 0,
       seconds: 0,
       fixedSeconds: 0,
-      runTimer: true,
+      timerIsRunning: true,
       needToWork: true
     }
   }
 
   componentDidMount() {   
-    if (this.state.runTimer){
+    if (this.state.timerIsRunning){
       this.initTimer()
       this.fixSecondsLayout()
       this.interval = setInterval(this.startTimer, 1000)
-      this.setState(() => ({runTimer: false}))
+      this.setState(() => ({timerIsRunning: false}))
     }
   }
 
@@ -53,7 +53,7 @@ export default class App extends React.Component{
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.runTimer
+    return this.state.timerIsRunning
   }
 
   initTimer = () => {
@@ -110,8 +110,8 @@ export default class App extends React.Component{
   }
 
   startClick = () => {
-    if (!this.state.runTimer) {
-      this.setState(() => ({runTimer: true}))
+    if (!this.state.timerIsRunning) {
+      this.setState(() => ({timerIsRunning: true}))
       clearInterval(this.interval)
       this.interval = setInterval(this.startTimer, 1000)
     }
@@ -119,13 +119,13 @@ export default class App extends React.Component{
 
   resetClick = () => {
     clearInterval(this.interval)
-    this.setState(() => ({runTimer: false}))
+    this.setState(() => ({timerIsRunning: false}))
     this.initTimer()
     this.interval = setInterval(this.startTimer, 1000)
   }
 
   stopClick = () => {
-    this.setState(() => ({runTimer: false}))
+    this.setState(() => ({timerIsRunning: false}))
     clearInterval(this.interval)
   }
 
