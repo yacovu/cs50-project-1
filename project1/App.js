@@ -118,7 +118,7 @@ export default class App extends React.Component{
 
   resetClick = () => {
     clearInterval(this.interval)
-    this.setState(prevState => ({runTimer: true}))
+    this.setState(prevState => ({runTimer: false}))
     this.initTimer()
     this.interval = setInterval(this.startTimer, 1000)
   }
