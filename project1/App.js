@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, SafeAreaView} from 'react-native';
 import {vibrate} from './utils';
 
 class Counter extends React.Component {
@@ -42,6 +42,7 @@ export default class App extends React.Component{
   componentDidMount() {   
     if (this.state.runTimer){
       this.initTimer()
+      this.fixSeconds()
       this.interval = setInterval(this.startTimer, 1000)
     }
   }
@@ -56,10 +57,10 @@ export default class App extends React.Component{
 
   initTimer = () => {
     if (this.state.needToWork) {
-      this.setState(prevState => ({minutes: 24, seconds: 59, fixedSeconds: 59}))
+      this.setState(prevState => ({minutes: 25, seconds: 0, fixedSeconds: "00"}))
     }
     else {
-      this.setState(prevState => ({minutes: 4, seconds: 59, fixedSeconds: 59}))
+      this.setState(prevState => ({minutes: 5, seconds: 0, fixedSeconds: "00"}))
     }
   }
 
@@ -106,12 +107,18 @@ export default class App extends React.Component{
   }
 
   startClick = () => {
-    this.setState(prevState => ({runTimer: true}))
-    this.interval = setInterval(this.startTimer, 1000)
+    if (!this.state.runTimer) {
+      this.setState(prevState => ({runTimer: true}))
+      clearInterval(this.interval)
+      this.interval = setInterval(this.startTimer, 1000)
+    }
   }
 
   resetClick = () => {
-
+    clearInterval(this.interval)
+    this.setState(prevState => ({runTimer: true}))
+    this.initTimer()
+    this.interval = setInterval(this.startTimer, 1000)
   }
 
   stopClick = () => {
@@ -127,9 +134,11 @@ render() {
         <Counter
           minutes={this.state.minutes}
           seconds={this.state.fixedSeconds}/>
-        <Button title="start" onPress={this.startClick} />
-        <Button title="stop" onPress={this.stopClick} />
-        <Button title="reset" onPress={this.resetClick} />
+          <SafeAreaView>
+            <Button title="start" onPress={this.startClick} />
+            <Button title="stop" onPress={this.stopClick} />
+            <Button title="reset" onPress={this.resetClick} />
+          </SafeAreaView>
       </View>
     );
   }
