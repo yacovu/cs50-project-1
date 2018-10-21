@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 import {vibrate} from './utils';
 
 class Counter extends React.Component {
@@ -56,13 +56,11 @@ export default class App extends React.Component{
 
   initTimer = () => {
     if (this.state.needToWork) {
-      this.setState(prevState => ({minutes: 25, seconds: 0}))
-      this.fixSeconds()
+      this.setState(prevState => ({minutes: 24, seconds: 59, fixedSeconds: 59}))
     }
     else {
-      this.setState(prevState => ({minutes: 5, seconds: 0}))
+      this.setState(prevState => ({minutes: 4, seconds: 59, fixedSeconds: 59}))
     }
-    this.setState(prevState => ({needToWork: !prevState.needToWork}))
   }
 
 
@@ -82,42 +80,59 @@ export default class App extends React.Component{
    this.setState(prevState => ({fixedSeconds: "0" + this.state.seconds}))
  }
 
- checkIfTimeIsUp = () => {
-    if (this.state.minutes === 0 && this.state.seconds === 0) {
-      vibrate()
-      changeTimerType()
-    }
+ timeIsUp = () => {
+    return this.state.minutes === 0 && this.state.seconds === 0
   }
 
   changeTimerType = () => {
-    
+    this.setState(prevState => ({needToWork: !prevState.needToWork}))
+    this.initTimer()
   }
 
   startTimer = () => {
-    if (this.state.seconds < 10) {
-      this.fixSeconds()
-      // alert(this.state.fixedSeconds)
-      if (this.state.seconds === 0) {
-        this.decreaseTimerByOneMinute()
-        this.checkIfTimeIsUp()
-      }    
-    }
-    this.decreaseTimerByOneSecond()
+  if (this.state.seconds < 10) {
+    this.fixSeconds()
+     if (this.state.seconds === 0) {      
+        if (this.timeIsUp()) {          
+          vibrate()          
+          this.changeTimerType()
+        }
+        else {  
+          this.decreaseTimerByOneMinute() 
+        }               
+       }    
+     }
+     this.decreaseTimerByOneSecond()
+  }
+
+  startClick = () => {
+    this.setState(prevState => ({runTimer: true}))
+    this.interval = setInterval(this.startTimer, 1000)
+  }
+
+  resetClick = () => {
+
+  }
+
+  stopClick = () => {
+    this.setState(prevState => ({runTimer: false}))
+    clearInterval(this.interval)
   }
 
 
 render() {
-  return (
-    <View 
-      style={styles.container}
-    >
-      <Counter
-        minutes={this.state.minutes}
-        seconds={this.state.fixedSeconds}
-      />
-    </View>
-  );
-}
+    return (
+      <View 
+        style={styles.container}>
+        <Counter
+          minutes={this.state.minutes}
+          seconds={this.state.fixedSeconds}/>
+        <Button title="start" onPress={this.startClick} />
+        <Button title="stop" onPress={this.stopClick} />
+        <Button title="reset" onPress={this.resetClick} />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
