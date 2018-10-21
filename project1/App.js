@@ -44,6 +44,7 @@ export default class App extends React.Component{
       this.initTimer()
       this.fixSecondsLayout()
       this.interval = setInterval(this.startTimer, 1000)
+      this.setState(() => ({runTimer: false}))
     }
   }
 
@@ -110,7 +111,7 @@ export default class App extends React.Component{
 
   startClick = () => {
     if (!this.state.runTimer) {
-      this.setState(prevState => ({runTimer: true}))
+      this.setState(() => ({runTimer: true}))
       clearInterval(this.interval)
       this.interval = setInterval(this.startTimer, 1000)
     }
@@ -118,13 +119,13 @@ export default class App extends React.Component{
 
   resetClick = () => {
     clearInterval(this.interval)
-    this.setState(prevState => ({runTimer: false}))
+    this.setState(() => ({runTimer: false}))
     this.initTimer()
     this.interval = setInterval(this.startTimer, 1000)
   }
 
   stopClick = () => {
-    this.setState(prevState => ({runTimer: false}))
+    this.setState(() => ({runTimer: false}))
     clearInterval(this.interval)
   }
 
