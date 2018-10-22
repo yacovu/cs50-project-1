@@ -10,16 +10,18 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, SafeAreaView} from 'react-native';
 import {vibrate} from './utils';
 
+const workTime = 25 * 60 //25 minutes
+const restTime = 5 * 60 //5 minutes
+
 class Counter extends React.Component {
   constructor() {
-    super()
-    
+    super()    
   }
 
  render() {
     return (
       <View style={styles.container}>
-        <Text>{this.props.minutes}:{this.props.seconds}</Text> 
+        <Text>{this.props.time.minutes}:{this.props.time.seconds}</Text> 
       </View>
     );
   }
@@ -30,10 +32,7 @@ export default class App extends React.Component{
    constructor() {
     super()
     this.state = {
-      //TODO: change from seconds to minutes
-      minutes: 0,
       seconds: 0,
-      fixedSeconds: 0,
       timerIsRunning: true,
       needToWork: true
     }
@@ -42,7 +41,6 @@ export default class App extends React.Component{
   componentDidMount() {   
     if (this.state.timerIsRunning){
       this.initTimer()
-      this.fixSecondsLayout()
       this.interval = setInterval(this.startTimer, 1000)
       this.setState(() => ({timerIsRunning: false}))
     }
@@ -58,34 +56,15 @@ export default class App extends React.Component{
 
   initTimer = () => {
     if (this.state.needToWork) {
-      this.setState(prevState => ({minutes: 25, seconds: 1, fixedSeconds: "00"}))
-      // this.setState(prevState => ({minutes: 0, seconds: 10, fixedSeconds: "00"}))
+      this.setState(() => ({seconds: workTime}))
     }
     else {
-      this.setState(prevState => ({minutes: 5, seconds: 1, fixedSeconds: "00"}))
-      // this.setState(prevState => ({minutes: 0, seconds: 5, fixedSeconds: "00"}))
+      this.setState(() => ({seconds: restTime}))
     }
-  }
-
-
-  decreaseTimerByOneMinute = () => {
-    this.setState(prevState => ({
-        seconds: 59,
-        fixedSeconds: 59,
-        minutes: prevState.minutes - 1
-      }))
   }
 
   decreaseTimerByOneSecond = () => {
-    this.setState(prevState => ({seconds: prevState.seconds - 1, fixedSeconds: this.state.seconds}))
-  }
-
- fixSecondsLayout = () => {
-   this.setState(() => ({fixedSeconds: "0" + this.state.seconds}))
- }
-
- timeIsUp = () => {
-    return this.state.minutes === 0 && this.state.seconds === 0
+    this.setState(prevState => ({seconds: prevState.seconds - 1}))
   }
 
   changeTimerType = () => {
@@ -95,18 +74,24 @@ export default class App extends React.Component{
 
   startTimer = () => {
     this.decreaseTimerByOneSecond()
-    if (this.state.seconds < 10) {
-      this.fixSecondsLayout()
-      if (this.state.seconds === 0) {    
-        if (this.timeIsUp()) { 
-          vibrate()          
-          this.changeTimerType()
-        }
-        else {
-          this.decreaseTimerByOneMinute() 
-        }
-      }
+    if (this.state.seconds === 0) {    
+      vibrate()
+      this.changeTimerType() 
     }
+  }
+
+  convertToMinutesAndSeconds = (totalSeconds) => {
+    let minutes = Math.floor(totalSeconds / 60)
+    let seconds = totalSeconds % 60
+
+    if (seconds < 10) {
+      seconds = "0" + seconds
+    }
+    if (minutes < 10) {
+      minutes = "0" + minutes
+    }
+
+    return {minutes: minutes, seconds: seconds}    
   }
 
   startClick = () => {
@@ -119,9 +104,9 @@ export default class App extends React.Component{
 
   resetClick = () => {
     clearInterval(this.interval)
-    this.setState(() => ({timerIsRunning: false}))
     this.initTimer()
     this.interval = setInterval(this.startTimer, 1000)
+    this.setState(() => ({timerIsRunning: false}))
   }
 
   stopClick = () => {
@@ -135,8 +120,7 @@ render() {
       <View 
         style={styles.container}>
         <Counter
-          minutes={this.state.minutes}
-          seconds={this.state.fixedSeconds}/>
+          time={this.convertToMinutesAndSeconds(this.state.seconds)}/>
           <SafeAreaView>
             <Button title="start" onPress={this.startClick} />
             <Button title="stop" onPress={this.stopClick} />
