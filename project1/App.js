@@ -41,7 +41,6 @@ export default class App extends React.Component{
   componentDidMount() {   
     if (this.state.timerIsRunning){
       this.initTimer()
-      this.interval = setInterval(this.startTimer, 1000)
       this.stopClick()
     }
   }
