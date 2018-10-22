@@ -42,7 +42,7 @@ export default class App extends React.Component{
     if (this.state.timerIsRunning){
       this.initTimer()
       this.interval = setInterval(this.startTimer, 1000)
-      this.setState(() => ({timerIsRunning: false}))
+      this.stopClick()
     }
   }
 
@@ -103,10 +103,8 @@ export default class App extends React.Component{
   }
 
   resetClick = () => {
-    clearInterval(this.interval)
     this.initTimer()
-    this.interval = setInterval(this.startTimer, 1000)
-    this.setState(() => ({timerIsRunning: false}))
+    this.stopClick()
   }
 
   stopClick = () => {
